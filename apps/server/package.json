@@ -9,12 +9,14 @@
         "postinstall": "prisma generate"
     },
     "devDependencies": {
+        "@types/express": "^5.0.5",
         "tsc-watch": "^6.0.4",
         "typescript": "^5.3.3"
     },
     "dependencies": {
         "@prisma/client": "^5.7.0",
         "dotenv": "^16.3.1",
+        "express": "^5.1.0",
         "ioredis": "^5.3.2",
         "kafkajs": "^2.2.4",
         "socket.io": "^4.7.2"
