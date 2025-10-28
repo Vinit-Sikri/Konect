@@ -1,0 +1,22 @@
+{
+    "name": "server",
+    "version": "2.0.0",
+    "private": "true",
+    "scripts": {
+        "build": "tsc  -p .",
+        "start": "node dist/index",
+        "dev": "npx tsc-watch --onSuccess \"node dist/index.js\"",
+        "postinstall": "prisma generate"
+    },
+    "devDependencies": {
+        "tsc-watch": "^6.0.4",
+        "typescript": "^5.3.3"
+    },
+    "dependencies": {
+        "@prisma/client": "^5.7.0",
+        "dotenv": "^16.3.1",
+        "ioredis": "^5.3.2",
+        "kafkajs": "^2.2.4",
+        "socket.io": "^4.7.2"
+    }
+}
