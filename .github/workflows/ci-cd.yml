@@ -1,3 +1,5 @@
+# This is a GitHub Actions workflow to build, test, and deploy your Konect app.
+# It will run on every push or pull request to the 'main' branch.
 
 name: Konect CI/CD
 
@@ -29,28 +31,20 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: 'npm' # Speed up installs by caching dependencies
 
-      # 3. Install all dependencies from the root
+      # 3. Install ALL dependencies from the root
+      # This is the only install step you need for a monorepo
       - name: Install root dependencies
         run: npm install
 
-      # 4. Install dependencies for the server app
-      - name: Install server dependencies
-        run: npm install --prefix apps/server
-
-      # 5. Install dependencies for the web app
-      - name: Install web dependencies
-        run: npm install --prefix apps/web
-
-      # 6. Run linting (assuming you have a 'lint' script in root package.json)
-      # If not, you can remove this step or add 'npm run lint --prefix apps/server', etc.
+      # 4. Run linting
       - name: Lint code
-        run: npm run lint --if-present # --if-present prevents failure if script doesn't exist
+        run: npm run lint --if-present
 
-      # 7. Build the server
+      # 5. Build the server
       - name: Build server
         run: npm run build --prefix apps/server
 
-      # 8. Build the frontend
+      # 6. Build the frontend
       - name: Build web
         run: npm run build --prefix apps/web
 
@@ -61,7 +55,6 @@ jobs:
     needs: ci-pipeline # This job will ONLY run if 'ci-pipeline' job succeeds
     
     # Only run this deploy job on a PUSH to the MAIN branch
-    # This prevents it from deploying on Pull Requests
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
 
     steps:
@@ -70,3 +63,4 @@ jobs:
         
       - name: Trigger frontend deploy on Render
         run: curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK_FRONTEND }}
+
