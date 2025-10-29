@@ -1,67 +1,76 @@
-"use client"
+"use client";
 
-import { createContext, useCallback, useContext, useEffect, useState } from "react"
-import { Socket, io } from "socket.io-client"
+import { createContext, useCallback, useContext, useEffect, useState } from "react";
+import { Socket, io } from "socket.io-client";
 
 interface SocketProviderProps {
-    children: React.ReactNode
+  children: React.ReactNode;
 }
 
 interface ISocketContext {
-    sendMessage: ({ message, username }: { message: string, username: string }) => void
-    messages: { message: string, username: string }[]
+  sendMessage: ({ message, username }: { message: string; username: string }) => void;
+  messages: { message: string; username: string }[];
 }
 
-const SocketContext = createContext<ISocketContext | null>(null)
+const SocketContext = createContext<ISocketContext | null>(null);
 
 export const useSocket = () => {
-    const state = useContext(SocketContext)
-    if (!state) throw new Error("State is undefined")
-    return state
-}
+  const state = useContext(SocketContext);
+  if (!state) throw new Error("State is undefined");
+  return state;
+};
 
 export const SocketProvider = ({ children }: SocketProviderProps) => {
-    const [socket, setSocket] = useState<Socket>()
-    const [messages, setMessages] = useState<{ message: string, username: string }[]>([])
+  const [socket, setSocket] = useState<Socket>();
+  const [messages, setMessages] = useState<{ message: string; username: string }[]>([]);
 
-    const sendMessage: ISocketContext["sendMessage"] = useCallback(
-        ({ message, username }) => {
-            if (socket) socket.emit("event:message", { message, username })
-        },
-        [socket]
-    )
+  const sendMessage: ISocketContext["sendMessage"] = useCallback(
+    ({ message, username }) => {
+      if (socket) socket.emit("event:message", { message, username });
+    },
+    [socket]
+  );
 
-    const onMessageReceived = useCallback(({ message, username }: { message: string, username: string }) => {
-        setMessages(prev => [...prev, { message, username }])
-    }, [])
+  const onMessageReceived = useCallback(
+    ({ message, username }: { message: string; username: string }) => {
+      setMessages((prev) => [...prev, { message, username }]);
+    },
+    []
+  );
 
-    const onHistoryReceived = useCallback((history: { message: string, username: string }[]) => {
-        setMessages(history)
-    }, [])
+  const onHistoryReceived = useCallback(
+    (history: { message: string; username: string }[]) => {
+      setMessages(history);
+    },
+    []
+  );
 
-    useEffect(() => {
-        const _socket = io("http://localhost:4000", {
-            transports: ["websocket"],
-            reconnectionAttempts: 5,
-            reconnectionDelay: 1000,
-        })
+  useEffect(() => {
+    // 👇 Use backend URL from env (fallback to localhost)
+    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:4000";
 
-        _socket.on("message", onMessageReceived)
-        _socket.on("message:history", onHistoryReceived)
+    const _socket = io(backendUrl, {
+      transports: ["websocket"],
+      reconnectionAttempts: 5,
+      reconnectionDelay: 1000,
+    });
 
-        setSocket(_socket)
+    _socket.on("message", onMessageReceived);
+    _socket.on("message:history", onHistoryReceived);
 
-        return () => {
-            _socket.disconnect()
-            _socket.off("message", onMessageReceived)
-            _socket.off("message:history", onHistoryReceived)
-            setSocket(undefined)
-        }
-    }, [])
+    setSocket(_socket);
 
-    return (
-        <SocketContext.Provider value={{ sendMessage, messages }}>
-            {children}
-        </SocketContext.Provider>
-    )
-}
+    return () => {
+      _socket.disconnect();
+      _socket.off("message", onMessageReceived);
+      _socket.off("message:history", onHistoryReceived);
+      setSocket(undefined);
+    };
+  }, [onMessageReceived, onHistoryReceived]);
+
+  return (
+    <SocketContext.Provider value={{ sendMessage, messages }}>
+      {children}
+    </SocketContext.Provider>
+  );
+};
