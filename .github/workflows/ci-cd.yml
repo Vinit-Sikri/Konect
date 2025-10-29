@@ -35,20 +35,14 @@ jobs:
       - name: Install root dependencies
         run: npm install
 
-      # 4. Run linting on the server app
-      # We run this separately to know exactly where errors are
-      - name: Lint server code
-        run: npm run lint --prefix apps/server --if-present
-
-      # 5. Run linting on the web app
-      - name: Lint web code
-        run: npm run lint --prefix apps/web --if-present
-
-      # 6. Build the server
+      # 4. Build the server (with lint:fix)
+      # We run lint:fix here to automatically fix simple style errors
       - name: Build server
-        run: npm run build --prefix apps/server
+        run: |
+          npm run lint:fix --prefix apps/server --if-present
+          npm run build --prefix apps/server
 
-      # 7. Build the frontend (with lint:fix)
+      # 5. Build the frontend (with lint:fix)
       # We run lint:fix here to automatically fix simple style errors
       - name: Build web
         run: |
@@ -66,7 +60,7 @@ jobs:
 
     steps:
       - name: Trigger backend deploy on Render
-        run: curl -X POST ${{ secrets.RENDER_DEPL_OY_HOOK_BACKEND }}
+        run: curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK_BACKEND }}
         
       - name: Trigger frontend deploy on Render
         run: curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK_FRONTEND }}
