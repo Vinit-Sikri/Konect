@@ -1,0 +1,72 @@
+
+name: Konect CI/CD
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  # Job 1: Run Continuous Integration (Install, Lint, Build)
+  ci-pipeline:
+    name: CI Pipeline
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        node-version: [ 20.x ] # Use a stable LTS Node.js version
+
+    steps:
+      # 1. Get the code from your repository
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      # 2. Set up the correct Node.js version
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm' # Speed up installs by caching dependencies
+
+      # 3. Install all dependencies from the root
+      - name: Install root dependencies
+        run: npm install
+
+      # 4. Install dependencies for the server app
+      - name: Install server dependencies
+        run: npm install --prefix apps/server
+
+      # 5. Install dependencies for the web app
+      - name: Install web dependencies
+        run: npm install --prefix apps/web
+
+      # 6. Run linting (assuming you have a 'lint' script in root package.json)
+      # If not, you can remove this step or add 'npm run lint --prefix apps/server', etc.
+      - name: Lint code
+        run: npm run lint --if-present # --if-present prevents failure if script doesn't exist
+
+      # 7. Build the server
+      - name: Build server
+        run: npm run build --prefix apps/server
+
+      # 8. Build the frontend
+      - name: Build web
+        run: npm run build --prefix apps/web
+
+  # Job 2: Run Continuous Deployment (Trigger Render)
+  cd-deploy:
+    name: CD Deploy
+    runs-on: ubuntu-latest
+    needs: ci-pipeline # This job will ONLY run if 'ci-pipeline' job succeeds
+    
+    # Only run this deploy job on a PUSH to the MAIN branch
+    # This prevents it from deploying on Pull Requests
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Trigger backend deploy on Render
+        run: curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK_BACKEND }}
+        
+      - name: Trigger frontend deploy on Render
+        run: curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK_FRONTEND }}
