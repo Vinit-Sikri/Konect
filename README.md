@@ -39,6 +39,3 @@ Konect is a **real-time full-stack application** that enables seamless, low-late
 - **PostgreSQL** stores user and message data persistently.
 
 ---
-
-## 🧩 Architecture Overview
-
