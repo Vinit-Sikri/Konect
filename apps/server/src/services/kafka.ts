@@ -1,3 +1,7 @@
+// Kafka temporarily disabled in demo mode.
+// Uncomment logic when Redpanda/Postgres are available.
+
+
 import { Kafka, Producer, SASLOptions } from "kafkajs";
 import db from "./prisma";
 

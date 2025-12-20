@@ -47,7 +47,7 @@ export const SocketProvider = ({ children }: SocketProviderProps) => {
 
   useEffect(() => {
     // 👇 Use backend URL from env (fallback to localhost)
-    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:4000";
+    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000";
 
     const _socket = io(backendUrl, {
       transports: ["websocket"],
