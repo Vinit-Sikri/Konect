@@ -9,7 +9,7 @@
 
 ## Overview
 
-Konect is a scalable, production-grade chat application that leverages modern backend infrastructure to deliver low-latency, real-time messaging. It uses **Kafka (Redpanda)** for asynchronous event processing, **Redis Pub/Sub** for multi-instance message broadcasting, and **WebSockets** for persistent client connections — all backed by a **PostgreSQL** database managed through **Prisma ORM**.
+Konect is a scalable chat application that leverages modern backend infrastructure to deliver low-latency, real-time messaging. It uses **Kafka (Redpanda)** for asynchronous event processing, **Redis Pub/Sub** for multi-instance message broadcasting, and **WebSockets** for persistent client connections — all backed by a **PostgreSQL** database managed through **Prisma ORM**.
 
 ---
 
