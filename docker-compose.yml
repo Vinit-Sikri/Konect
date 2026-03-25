@@ -1,0 +1,34 @@
+services:
+  node-app:
+    build:
+      dockerfile: DockerfileServer
+    restart: unless-stopped
+    ports:
+      - '3000:3000'
+
+    env_file:
+      - .env
+
+    volumes:
+      - ./certs:/app/certs
+
+    labels:
+      - "autoheal=true"
+
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  autoheal:
+    image: willfarrell/autoheal:latest
+    tty: true
+    restart: always
+    environment:
+      - AUTOHEAL_INTERVAL=10
+      - AUTOHEAL_START_PERIOD=15
+      - AUTOHEAL_DEFAULT_STOP_TIMEOUT=10
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock

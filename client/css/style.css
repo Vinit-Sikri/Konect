@@ -1,0 +1,209 @@
+/* ============================================
+   KONECT — Auth Pages (Login / Register)
+   ============================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --bg:         #111318;
+  --surface:    #1a1d24;
+  --surface2:   #22262f;
+  --accent:     #5865f2;
+  --accent-dim: rgba(88,101,242,0.18);
+  --text:       #e8eaf0;
+  --text-muted: #6b717f;
+  --border:     #2a2e38;
+  --danger:     #ed4245;
+  --success:    #3ba55d;
+  --radius:     12px;
+  --radius-sm:  8px;
+}
+
+html, body {
+  height: 100%;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.5;
+}
+
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 20px;
+}
+
+/* ---- Card ---- */
+.container {
+  width: 100%;
+  max-width: 400px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 36px 32px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.4);
+}
+
+/* ---- Brand header ---- */
+.brand-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 28px;
+}
+
+.brand-logo {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 18px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.brand-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.3px;
+}
+
+/* ---- Headings ---- */
+.container h2 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 4px;
+  letter-spacing: -0.2px;
+}
+
+.subtitle {
+  font-size: 13.5px;
+  color: var(--text-muted);
+  margin-bottom: 24px;
+}
+
+/* ---- Input group ---- */
+.input-group {
+  margin-bottom: 16px;
+}
+
+.input-group label {
+  display: block;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 11px 14px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-size: 14px;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.input-group input::placeholder {
+  color: var(--text-muted);
+  opacity: 0.6;
+}
+
+.input-group input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-dim);
+}
+
+/* ---- Buttons ---- */
+.btn-login,
+.btn-register {
+  width: 100%;
+  padding: 12px;
+  margin-top: 4px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: inherit;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background 0.15s, transform 0.1s;
+  letter-spacing: 0.1px;
+}
+
+.btn-login:hover,
+.btn-register:hover {
+  background: #4752c4;
+}
+
+.btn-login:active,
+.btn-register:active {
+  transform: scale(0.99);
+}
+
+.btn-login:disabled,
+.btn-register:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* ---- Footer link ---- */
+.login-link {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 13.5px;
+  color: var(--text-muted);
+}
+
+.login-link a {
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.login-link a:hover {
+  text-decoration: underline;
+}
+
+/* ---- Error ---- */
+.error-text {
+  margin-top: 12px;
+  font-size: 13px;
+  min-height: 0;
+}
+
+.error-text p {
+  color: var(--danger);
+  background: rgba(237,66,69,0.1);
+  border: 1px solid rgba(237,66,69,0.25);
+  border-radius: 6px;
+  padding: 8px 12px;
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 440px) {
+  .container {
+    padding: 28px 20px;
+  }
+}

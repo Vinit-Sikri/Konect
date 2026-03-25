@@ -1,0 +1,19 @@
+FROM node:18-alpine
+
+WORKDIR /app
+
+# Install curl for health check
+RUN apk add --no-cache curl
+
+COPY package*.json ./
+
+RUN npm install
+
+COPY . .
+
+# Copy client files for serving static content
+COPY client ./client
+
+EXPOSE 3000
+
+CMD ["node", "server/index.js"]

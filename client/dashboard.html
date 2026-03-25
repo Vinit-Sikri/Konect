@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Konect — browse and join chat rooms.">
+  <title>Dashboard — Konect</title>
+  <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+
+  <!-- Auth guard -->
+  <script>
+    if (!sessionStorage.getItem('auth-token')) {
+      window.location.href = 'index.html';
+    }
+  </script>
+
+  <div class="dashboard-wrapper">
+
+    <!-- Top Navigation -->
+    <nav class="top-nav">
+      <a href="#" class="brand">
+        <div class="brand-icon">K</div>
+        <span class="brand-name">Konect</span>
+      </a>
+      <div class="nav-right">
+        <div class="nav-avatar" id="nav-avatar-letter">U</div>
+        <button class="btn leave-btn" id="leave-btn">Sign Out</button>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+
+      <div class="page-header">
+        <h1>Rooms</h1>
+        <p>Create a new room or join an existing conversation</p>
+      </div>
+
+      <!-- Create Room -->
+      <section class="create-section">
+        <label class="section-label">New Room</label>
+        <div class="btn-container">
+          <input
+            type="text"
+            class="roomInput"
+            id="message-input"
+            placeholder="Room name"
+            autocomplete="off"
+            maxlength="50"
+          />
+          <button class="btn btn-primary" id="create-btn">Create</button>
+          <button class="btn btn-secondary" id="see-btn">Refresh</button>
+        </div>
+        <div class="error-text" id="error-box"></div>
+      </section>
+
+      <!-- Room List -->
+      <section class="rooms-section" id="rooms-section">
+        <div class="rooms-section-header">
+          <span class="section-label">Available Rooms</span>
+          <span class="rooms-count-badge" id="rooms-count"></span>
+        </div>
+        <ul id="room-list" class="room-list"></ul>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="js/dashboard.js"></script>
+</body>
+</html>

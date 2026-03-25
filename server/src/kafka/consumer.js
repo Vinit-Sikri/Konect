@@ -1,0 +1,60 @@
+const {Kafka} = require('kafkajs');
+const { kafkaConfig } = require('../../config');
+const { TokenExpiredError } = require('jsonwebtoken');
+const {saveMessage} = require("../repos/chatRoom");
+
+let consumer = null;
+if (kafkaConfig.enabled) {
+  const kafkaConfigObj = {
+    clientId: 'my-app',
+    brokers: kafkaConfig.brokers
+  };
+
+  if (kafkaConfig.ssl) {
+    kafkaConfigObj.ssl = kafkaConfig.ssl;
+  }
+
+  const kafka = new Kafka(kafkaConfigObj);
+  consumer = kafka.consumer({ groupId: 'kafka' });
+}
+
+const consume = async (io) => {
+  if (!consumer) {
+    return;
+  }
+  console.log("------------ Initializing Kafka Consumer -----------")
+  await consumer.connect()
+  await consumer.subscribe({topic: kafkaConfig.topic.CHAT_MESSAGES, fromBeginning: true })
+  await consumer.subscribe({topic: kafkaConfig.topic.CHAT_EVENTS, fromBeginning: true })
+  await consumer.run({
+    eachMessage: async ({ topic, message }) => {
+      console.log("****************** Arrived in Kafka Consumer ******************")
+      console.log("--------Message Topic----------", topic)
+      const obj = JSON.parse(message.value);
+      console.log("the received object",obj);
+
+      if(topic === kafkaConfig.topic.CHAT_MESSAGES || topic === kafkaConfig.topic.CHAT_EVENTS){
+        await saveMessage(obj.messageText, obj.userMail, obj.isEvent, obj.roomName).then(async () => {
+          console.log("saved message to the database")
+        }).catch(err => {
+          console.log("Error occurred ", err)
+        })
+        io.to(obj.roomName).emit('receiveMessage', obj);
+      }
+   },
+  });
+
+  process.on('SIGINT', handleShutdown);
+  process.on('SIGTERM', handleShutdown);
+}
+
+async function handleShutdown(signal) {
+  console.log(`Received signal ${signal}, shutting down Kafka consumer...`);
+  if (!consumer) return;
+  await consumer.disconnect();
+  console.log("Kafka consumer disconnected");
+  process.exit(0); // Exit the process after consumer disconnects
+}
+// consume()
+
+module.exports = {consume}

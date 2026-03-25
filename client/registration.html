@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Create your Konect account and start messaging.">
+  <title>Register — Konect</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <form class="container" id="register-form" autocomplete="off" novalidate>
+    <div class="brand-header">
+      <div class="brand-logo">K</div>
+      <span class="brand-title">Konect</span>
+    </div>
+
+    <h2>Create your account</h2>
+    <p class="subtitle">Join Konect and start chatting instantly</p>
+
+    <div class="input-group">
+      <label for="email">Email address</label>
+      <input type="email" id="email" name="email" placeholder="you@example.com" autocomplete="email">
+    </div>
+
+    <div class="input-group">
+      <label for="password">Password</label>
+      <input type="password" id="password" name="password" placeholder="Create a strong password" autocomplete="new-password">
+    </div>
+
+    <button class="btn-register" id="register-btn" type="submit">
+      <span class="btn-text">Create Account</span>
+    </button>
+
+    <div class="login-link">
+      <p>Already have an account? <a href="index.html">Sign in</a></p>
+    </div>
+
+    <div class="error-text" id="error-box"></div>
+  </form>
+
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="js/authRegistration.js"></script>
+</body>
+</html>

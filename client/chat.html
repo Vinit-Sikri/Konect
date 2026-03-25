@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Konect — real-time chat">
+  <title>Chat — Konect</title>
+  <link rel="stylesheet" href="./css/chat.css">
+</head>
+<body>
+
+  <!-- Sidebar overlay for mobile -->
+  <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+  <div class="chat">
+
+    <!-- ===== SIDEBAR ===== -->
+    <div id="sidebar" class="chat__sidebar">
+      <!-- Injected by JS via Mustache -->
+    </div>
+
+    <!-- ===== MAIN CHAT ===== -->
+    <div class="chat__main">
+
+      <!-- Header -->
+      <div class="chat__header" id="chat-header">
+        <div class="chat__header-left">
+          <button class="icon-btn" id="sidebar-toggle" title="Toggle members">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+          </button>
+          <div class="chat__room-avatar" id="header-room-avatar">#</div>
+          <div class="chat__room-info">
+            <div class="chat__room-name" id="header-room-name">Loading...</div>
+            <div class="chat__room-status" id="header-room-status">Connected</div>
+          </div>
+        </div>
+        <div class="chat__header-right">
+          <a href="dashboard.html" class="icon-btn back-link" title="Back to Rooms">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+            Rooms
+          </a>
+        </div>
+      </div>
+
+      <!-- Messages -->
+      <div id="messages" class="chat__messages">
+        <div class="chat__empty" id="empty-state" style="display:none;">
+          <div class="chat__empty-icon">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          </div>
+          <h3>No messages yet</h3>
+          <p>Be the first to say something!</p>
+        </div>
+      </div>
+
+      <!-- Typing indicator -->
+      <div class="typing-indicator" id="typing-indicator">
+        <div class="typing-dots">
+          <span></span><span></span><span></span>
+        </div>
+        <span id="typing-text">Someone is typing...</span>
+      </div>
+
+      <!-- Compose bar -->
+      <div class="compose">
+        <form id="messageForm">
+          <button type="button" class="compose-emoji-btn" id="emoji-toggle" title="Emoji">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 13s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+          </button>
+          <input name="message" id="message-input" placeholder="Type a message..." autocomplete="off" maxlength="2000">
+          <button type="submit" class="compose-send-btn" id="send-btn" title="Send">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          </button>
+        </form>
+      </div>
+
+      <!-- Emoji picker -->
+      <div class="emoji-picker" id="emoji-picker"></div>
+
+    </div><!-- /.chat__main -->
+  </div><!-- /.chat -->
+
+  <!-- ===== SIDEBAR TEMPLATE (Mustache) ===== -->
+  <script id="sidebar-template" type="text/html">
+    <div class="sidebar__brand">
+      <div class="sidebar__brand-icon">K</div>
+      <span class="sidebar__brand-name">Konect</span>
+    </div>
+    <div class="chat__sidebar-scroll">
+      <div class="room-title"># {{roomName}}</div>
+      <div class="list-title">Members</div>
+      <ul class="users">
+        {{#users}}
+        <li>
+          <div class="user-avatar">{{avatar}}</div>
+          <span class="online-dot"></span>
+          <span class="user-name">{{name}}</span>
+        </li>
+        {{/users}}
+      </ul>
+    </div>
+    <div class="sidebar__footer">
+      <a href="dashboard.html" class="back-btn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        Back to Rooms
+      </a>
+    </div>
+  </script>
+
+  <!-- ===== MESSAGE TEMPLATE ===== -->
+  <script id="message-template" type="text/html">
+    <div class="message {{type}}">
+      <div class="message__header">
+        <span class="message__name">{{userName}}</span>
+        <span class="message__meta">{{createdAt}}</span>
+      </div>
+      <div class="message__body">{{message}}</div>
+    </div>
+  </script>
+
+  <!-- ===== SCRIPTS ===== -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/3.0.1/mustache.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qs/6.6.0/qs.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.3/socket.io.js"></script>
+  <script src="js/chat.js"></script>
+</body>
+</html>
