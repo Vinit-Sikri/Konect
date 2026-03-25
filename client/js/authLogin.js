@@ -3,7 +3,7 @@ const API_BASE =
   window.location.hostname === 'localhost' ||
   window.location.hostname === '127.0.0.1'
     ? 'http://localhost:3000'
-    : 'https://socks-zz58.onrender.com';
+    : 'https://konect-b.onrender.com';
 
 const loginBtn  = document.querySelector('.btn-login');
 const errorBox  = document.getElementById('error-box');
