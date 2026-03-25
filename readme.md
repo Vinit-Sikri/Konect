@@ -268,8 +268,8 @@ git push origin feature/amazing-feature
 
 | Platform | Link |
 |---|---|
-| 🐙 GitHub | [github.com/your-username](https://github.com/Vinit-Sikri) |
-| 💼 LinkedIn | [linkedin.com/in/your-profile](https://www.linkedin.com/in/vinit-sikri-46a997252) |
+| 🐙 GitHub | [https://github.com/Vinit-Sikri](https://github.com/Vinit-Sikri) |
+| 💼 LinkedIn | [https://www.linkedin.com/in/vinit-sikri-46a997252](https://www.linkedin.com/in/vinit-sikri-46a997252) |
 
 ---
 
