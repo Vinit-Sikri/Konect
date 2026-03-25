@@ -1,9 +1,9 @@
-const {Kafka} = require('kafkajs');
+const { Kafka } = require('kafkajs');
 const { kafkaConfig } = require('../../config');
-const { TokenExpiredError } = require('jsonwebtoken');
-const {saveMessage} = require("../repos/chatRoom");
+const { saveMessage } = require("../repos/chatRoom");
 
 let consumer = null;
+
 if (kafkaConfig.enabled) {
   const kafkaConfigObj = {
     clientId: 'my-app',
@@ -20,41 +20,53 @@ if (kafkaConfig.enabled) {
 
 const consume = async (io) => {
   if (!consumer) {
+    console.log("Kafka disabled, skipping consumer");
     return;
   }
-  console.log("------------ Initializing Kafka Consumer -----------")
-  await consumer.connect()
-  await consumer.subscribe({topic: kafkaConfig.topic.CHAT_MESSAGES, fromBeginning: true })
-  await consumer.subscribe({topic: kafkaConfig.topic.CHAT_EVENTS, fromBeginning: true })
-  await consumer.run({
-    eachMessage: async ({ topic, message }) => {
-      console.log("****************** Arrived in Kafka Consumer ******************")
-      console.log("--------Message Topic----------", topic)
-      const obj = JSON.parse(message.value);
-      console.log("the received object",obj);
 
-      if(topic === kafkaConfig.topic.CHAT_MESSAGES || topic === kafkaConfig.topic.CHAT_EVENTS){
-        await saveMessage(obj.messageText, obj.userMail, obj.isEvent, obj.roomName).then(async () => {
-          console.log("saved message to the database")
-        }).catch(err => {
-          console.log("Error occurred ", err)
-        })
-        io.to(obj.roomName).emit('receiveMessage', obj);
-      }
-   },
-  });
+  try {
+    console.log("------------ Initializing Kafka Consumer -----------");
 
-  process.on('SIGINT', handleShutdown);
-  process.on('SIGTERM', handleShutdown);
-}
+    await consumer.connect();
+    await consumer.subscribe({ topic: kafkaConfig.topic.CHAT_MESSAGES, fromBeginning: true });
+    await consumer.subscribe({ topic: kafkaConfig.topic.CHAT_EVENTS, fromBeginning: true });
 
-async function handleShutdown(signal) {
-  console.log(`Received signal ${signal}, shutting down Kafka consumer...`);
+    await consumer.run({
+      eachMessage: async ({ topic, message }) => {
+        try {
+          const obj = JSON.parse(message.value);
+
+          if (
+            topic === kafkaConfig.topic.CHAT_MESSAGES ||
+            topic === kafkaConfig.topic.CHAT_EVENTS
+          ) {
+            await saveMessage(obj.messageText, obj.userMail, obj.isEvent, obj.roomName);
+
+            io.to(obj.roomName).emit('receiveMessage', obj);
+          }
+        } catch (err) {
+          console.error("Kafka message error:", err);
+        }
+      },
+    });
+
+    process.on('SIGINT', handleShutdown);
+    process.on('SIGTERM', handleShutdown);
+
+  } catch (err) {
+    console.error("Kafka consumer failed:", err.message);
+  }
+};
+
+async function handleShutdown() {
   if (!consumer) return;
-  await consumer.disconnect();
-  console.log("Kafka consumer disconnected");
-  process.exit(0); // Exit the process after consumer disconnects
-}
-// consume()
 
-module.exports = {consume}
+  try {
+    await consumer.disconnect();
+    console.log("Kafka consumer disconnected");
+  } catch (err) {
+    console.error("Error disconnecting Kafka:", err);
+  }
+}
+
+module.exports = { consume };

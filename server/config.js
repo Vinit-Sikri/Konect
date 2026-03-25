@@ -2,6 +2,7 @@ const fs = require("fs");
 const path = require("path");
 const dotenv = require("dotenv");
 
+// Load env (kept same for local compatibility)
 dotenv.config({ path: path.resolve(__dirname, "../.env") });
 dotenv.config({ path: path.resolve(__dirname, "../.env.local"), override: true });
 dotenv.config();
@@ -36,7 +37,7 @@ const buildKafkaSsl = () => {
   };
 };
 
-// ✅ Kafka config
+// Kafka brokers
 const brokers = process.env.KAFKA_BROKERS
   ? process.env.KAFKA_BROKERS.split(",").map((b) => b.trim()).filter(Boolean)
   : [];
@@ -44,12 +45,12 @@ const brokers = process.env.KAFKA_BROKERS
 const kafkaSsl = buildKafkaSsl();
 const kafkaNeedsSsl = process.env.KAFKA_SSL === "true";
 
-// ✅ Redis TLS check
+// Redis TLS check
 const isSecureRedis = (process.env.REDIS_URL || "").startsWith("rediss://");
 
 module.exports = {
 
-  // ✅ DATABASE FIX (supports DATABASE_URL)
+  // ✅ DATABASE (unchanged)
   database: process.env.DATABASE_URL
     ? {
         url: process.env.DATABASE_URL,
@@ -67,10 +68,10 @@ module.exports = {
   jwt_expiry: process.env.JWT_EXPIRY || "6h",
   jwt_secret: process.env.JWT_SECRET || "a_strong_secret_key",
 
-  // ✅ REDIS FIX (TLS support added)
+  // ✅ REDIS (default OFF for production safety)
   redisConfig: {
     url: process.env.REDIS_URL || "redis://redis-container:6379",
-    enabled: (process.env.REDIS_ENABLED || "true") === "true",
+    enabled: (process.env.REDIS_ENABLED || "false") === "true",
     socket: isSecureRedis
       ? {
           tls: true,
@@ -79,9 +80,10 @@ module.exports = {
       : undefined,
   },
 
+  // ✅ KAFKA (default OFF for production safety)
   kafkaConfig: {
     enabled:
-      (process.env.KAFKA_ENABLED || "true") === "true" &&
+      (process.env.KAFKA_ENABLED || "false") === "true" &&
       brokers.length > 0 &&
       (!kafkaNeedsSsl || Boolean(kafkaSsl)),
 

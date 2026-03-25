@@ -6,48 +6,42 @@ const { kafkaConfig } = require('../../config');
 
 const socketHandler = (io) => {
 
-  // ✅ AUTH MIDDLEWARE (FINAL FIX)
   io.use((socket, next) => {
     try {
       const token = socket.handshake.auth?.token;
 
-      if (!token) {
-        console.log("❌ No token in socket");
-        return next(new Error("Unauthorized"));
-      }
+      if (!token) return next(new Error("Unauthorized"));
 
       const decoded = verifyToken(token);
 
-      if (!decoded || !decoded.userMail) {
-        console.log("❌ Invalid token payload");
-        return next(new Error("Unauthorized"));
-      }
+      if (!decoded?.userMail) return next(new Error("Unauthorized"));
 
       socket.userMail = decoded.userMail;
       socket.userId = decoded.userId;
 
       next();
     } catch (error) {
-      console.error("❌ Socket auth error:", error.message);
+      console.error("Socket auth error:", error.message);
       next(new Error("Unauthorized"));
     }
   });
 
   io.on('connection', (socket) => {
-    console.log('🔥 User connected:', socket.userMail);
-
     const userMail = socket.userMail;
+    console.log('User connected:', userMail);
 
-    // JOIN ROOM
-    socket.on('joinRoom', async (data) => {
+    socket.on('joinRoom', async ({ roomName }) => {
       try {
-        const { roomName } = data;
-
         if (!roomName) return;
 
         socket.join(roomName);
 
-        socket.emit('receiveMessage', `Welcome ${userMail} to ${roomName}`);
+        socket.emit('receiveMessage', {
+          messageText: `Welcome ${userMail} to ${roomName}`,
+          userMail: "system",
+          isEvent: true,
+          roomName
+        });
 
         await setUserActive(socket.id, roomName, userMail);
 
@@ -62,21 +56,15 @@ const socketHandler = (io) => {
 
         const users = await getOnlineUsers(roomName);
 
-        io.to(roomName).emit('onlineUsers', {
-          roomName,
-          users,
-        });
+        io.to(roomName).emit('onlineUsers', { roomName, users });
 
       } catch (err) {
-        console.error("❌ joinRoom error:", err);
+        console.error("joinRoom error:", err);
       }
     });
 
-    // SEND MESSAGE
-    socket.on('sendMessage', async (data) => {
+    socket.on('sendMessage', async ({ roomName, message }) => {
       try {
-        const { roomName, message } = data;
-
         if (!roomName || !message) return;
 
         const newMessage = prepareMessage(roomName, message, userMail, false);
@@ -84,46 +72,13 @@ const socketHandler = (io) => {
         await publishMessage(io, newMessage, kafkaConfig.topic.CHAT_MESSAGES);
 
       } catch (err) {
-        console.error("❌ sendMessage error:", err);
+        console.error("sendMessage error:", err);
       }
     });
 
-    // GET RECENT
-    socket.on('getRecentMessages', async (data) => {
-      try {
-        const { roomName, count } = data;
-
-        const messages = await getRecentMessages(roomName, count || 50);
-
-        socket.emit('recentMessages', messages);
-
-      } catch (err) {
-        console.error("❌ recentMessages error:", err);
-      }
-    });
-
-    // ONLINE USERS
-    socket.on('getOnlineUsers', async (data) => {
-      try {
-        const { roomName } = data;
-
-        const users = await getOnlineUsers(roomName);
-
-        socket.emit('onlineUsers', {
-          roomName,
-          users,
-        });
-
-      } catch (err) {
-        console.error("❌ onlineUsers error:", err);
-      }
-    });
-
-    // DISCONNECT
     socket.on('disconnect', async () => {
       try {
         const result = await setUserOffline(socket.id);
-
         if (!result) return;
 
         const { userMail, roomName } = result;
@@ -139,24 +94,17 @@ const socketHandler = (io) => {
 
         const users = await getOnlineUsers(roomName);
 
-        io.to(roomName).emit('onlineUsers', {
-          roomName,
-          users,
-        });
-
-        console.log(`❌ Disconnected: ${userMail}`);
+        io.to(roomName).emit('onlineUsers', { roomName, users });
 
       } catch (error) {
-        console.error('❌ Disconnect error:', error);
+        console.error('disconnect error:', error);
       }
     });
 
   });
 };
 
-
-// ---------- COMMON ----------
-
+// helpers
 const publishMessage = async (io, message, topic) => {
   try {
     if (kafkaConfig.enabled) {
@@ -174,7 +122,7 @@ const publishMessage = async (io, message, topic) => {
     io.to(message.roomName).emit('receiveMessage', message);
 
   } catch (err) {
-    console.error("❌ publishMessage error:", err);
+    console.error("publishMessage error:", err);
   }
 };
 
