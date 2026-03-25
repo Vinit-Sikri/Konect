@@ -1,132 +1,284 @@
-Turbo Chat
-============
+<div align="center">
 
-## Introduction
-A node.js chat application powered by Kafka, Redis, and WebSocket(Socket.io). This provides robustness in realtime message processing and scalability which is the core requirement for almost every chat application for handling various chat interactions.
+# 💬 Konect
 
-<p align="center">
-  <a href='https://postimg.cc/47ZN30Lc' target='_blank'>
-    <img src='https://i.postimg.cc/JnHypVjp/ChatApp.jpg'  width="500 height="160" alt='Blank-diagram'/>
-  </a>
-</p>
+### *Connecting Conversations in Real-Time*
 
+[![Live Demo](https://img.shields.io/badge/🚀%20Live%20Demo-konect--f.onrender.com-6c63ff?style=for-the-badge)](https://konect-f.onrender.com/)
+[![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)](https://nodejs.org/)
+[![Socket.io](https://img.shields.io/badge/Socket.io-010101?style=for-the-badge&logo=socketdotio&logoColor=white)](https://socket.io/)
+[![Express](https://img.shields.io/badge/Express.js-000000?style=for-the-badge&logo=express&logoColor=white)](https://expressjs.com/)
+[![Render](https://img.shields.io/badge/Deployed%20on-Render-46e3b7?style=for-the-badge)](https://render.com/)
 
-## Features
-- User friendly UI for interaction
-- User Registration
-- User Login/ Authentication
-- Room specific chat services
-- Private messaging
-- Active online users tracking
-- Low latency message retrieval using Redis caching
-- Scalable message processing with Kafka
+<br/>
 
-## Table of Contents
+> A production-ready, real-time chat application built with WebSockets — supporting room-based messaging, multiple users, and instant communication.
 
-- [Introduction](#introduction)
-- [Features](#features)
-- [Installation](#installation)
-- [Usage](#usage)
-- [Socket Events](#socket-events)
-- [User Interface](#user-interface)
-- [Component Design](#component-design)
-- [Conclusion](#conclusion)
-
+</div>
 
 ---
 
-## Installation
-Clone this repo or download it to your pc and run `docker-compose up` to get the setup ready.
+## 📌 Table of Contents
 
-You might want to look into `docker-compose.yml` and `DockerfileServer` files to make change the ports you want to use and set up a customize cluster.
+- [Overview](#-overview)
+- [Live Demo](#-live-demo)
+- [Features](#-features)
+- [Tech Stack](#-tech-stack)
+- [Architecture](#-architecture)
+- [Real-Time Communication Flow](#-real-time-communication-flow)
+- [Project Structure](#-project-structure)
+- [Setup & Installation](#-setup--installation)
+- [Deployment](#-deployment)
+- [Key Highlights](#-key-highlights)
+- [Future Improvements](#-future-improvements)
+- [Contributing](#-contributing)
+- [Contact](#-contact)
 
+---
+
+## 🌐 Overview
+
+**Konect** is a scalable, production-level chat application that enables users to create and join chat rooms and communicate instantly over WebSockets. Built from scratch, it showcases strong fundamentals in:
+
+- ⚡ Real-time systems design
+- 🧱 Client-server architecture
+- 🌐 Production deployment
+- 🎨 Clean and responsive UI engineering
 
 ---
 
-## Usage
+## 🔗 Live Demo
 
-### APIs
+👉 **[https://konect-f.onrender.com/](https://konect-f.onrender.com/)**
 
-For accessing recent chat, login, create user and active users, there is 5 APIs provided from the backend.
-  
- - http://localhost:3000/api/login
- - http://localhost:3000/api/register
- - http://localhost:3000/api/chat/ - POST, GET
- - http://localhost:3000/api/chat/:id/messages
-
-
->The detailed API documentation is available here :  [Postman API doc](https://documenter.getpostman.com/view/25350564/2sA2xb7bUX)
-
-
-### Socket Events
-To ensure prompt retrieval and transmission of messages, socket events are managed to effectively facilitate the communication process.
-
-##### Listener Events :
- - *receiveMessage* - for listening to upcoming messages
- - *onlineUsers* - update come when users enter or leave the room
- - *recentMessages* - when user hits to *getRecentMessages* event to get updated data, he gets recent message data in this event
-
-#### Emmiting Events :
- - *sendMessage* - client/frontend triggers this to send new message
- - *joinRoom* - when new user join a room this event is triggered
- - *getRecentMessages* - to provide recent messages
- - *getOnlineUsers* - to emmit online users update
-
-When a user opened a new socket connection he is treated as online and after closing the tab
-or connection break the user is treated as offline. 
-
->The detailed Socket documentation is available here :  [Chat App Socket Collection](https://www.postman.com/pathaopay/workspace/sockets-for-chat-app/collection/65e171da7003c3c1ddba3634?action=share&creator=25350564)
-
-### User Interface
-Once the installation process is done, you can interact with the application through the UI. All the features, events and endpoints are integrated in the front-end UI to get the full fledge functionality of the websocket based interaction.
-Explore the intuitive UI by navigating to [localhost:3000](http://localhost:3000) and unlock the full potential of websocket-based interactions.
-For a complete interactions follow the steps below:
- - Register a new user
- - Login with the credentials
- - Create new room
- - See available rooms
- - Join a room by clicking the room name
- - Interact with the chatbox
-
- <p align="center">
-  <a href="https://postimg.cc/XXrjccfC">
-    <img src="https://i.postimg.cc/NG4KtdLp/Screenshot-2024-03-03-at-10-03-43-PM-100.png" width="271" height="310" alt="Screenshot">
-  </a>
-</p>
-
-### Configuration
-The config file for the app is available at the project's root directory path. The configuration for database, redis, kafka is given for the docker setup. Feel free to customize these settings according to your requirements by editing the config.js file.
+> Try it live — open in two different tabs or devices and chat in real-time!
 
 ---
-## Component Design
-In this chat application, user interaction commences through a user-friendly UI, initiating requests that traverse the backend server. This server spins both an HTTP/REST server and a WebSocket server, both accessible at port 3000. The REST server seamlessly provides access to various APIs, while the WebSocket server takes charge of real-time messaging functionality.
 
-To enhance the responsiveness of our messaging system, we leverage the combined power of Redis and MySQL databases. When a user generates a message, it undergoes a dynamic journey through our application architecture. Initially, the message is published into Kafka, our event streaming platform. Subsequently, dedicated consumers within our servers capture the message, enabling us to relay it promptly to the intended user through the WebSocket connection.
+## ✨ Features
 
-<p align="center">
-  <a href='https://postimg.cc/06XCmYdV' target='_blank'>
-    <img src='https://i.postimg.cc/Y9MD584B/Blank-diagram.png'  width="385 height="240" alt='Blank-diagram'/>
-  </a>
-</p>
+| Feature | Description |
+|---|---|
+| 🔴 **Real-Time Messaging** | Instant communication powered by WebSockets |
+| 🏠 **Chat Rooms** | Create or join named rooms with ease |
+| 👥 **Multi-User Support** | Multiple users can communicate in the same room simultaneously |
+| 🟢 **Online Interaction** | See and interact with active users |
+| ⚡ **Zero Latency Feel** | Messages delivered and received instantly |
+| 🌐 **Production Deployed** | Fully live and accessible from anywhere |
 
-Kafka provides distributed messaging support, ensuring scalability and reliability in our chat system. It helps connect and support multiple WebSocket servers by utilizing separate consumer groups for each server. This ensures that every message is delivered to all WebSocket servers, where each server determines which messages to send to its connected users. This architecture enables seamless scalability, handling a large number of connected users efficiently while feeding multiple WebSocket servers.
+---
 
-To further optimize our messaging service and reduce latency, the message flow is intricately synchronized and reflected within Redis. The thoughtfully designed mapping and data flow mechanisms within our application serve the crucial purpose of correlating active users with their respective socket IDs. This carefully crafted approach ensures real-time tracking of active users within specific chat rooms through the robust capabilities of Redis.
+## 🧱 Tech Stack
 
-<p align="center">
-  <a href="https://postimg.cc/XXrjccfC">
-    <img src="https://i.postimg.cc/qv2jZSxM/Screenshot-2024-03-02-at-8-35-57-PM.png" width="385 height="240" alt="Screenshot">
-  </a>
-</p>
+### Frontend
+- **HTML5** — Semantic markup
+- **CSS3** — Responsive, clean UI design
+- **JavaScript (Vanilla)** — DOM manipulation & Socket.io client
 
-When pivotal events like `joinRoom` or `disconnect` occur in the WebSocket layer, Redis maintains an up-to-date record of active users. This process ensures dynamic and responsive monitoring of the active user base within chat rooms.
+### Backend
+- **Node.js** — Server-side runtime
+- **Express.js** — HTTP server & routing
+- **Socket.io** — WebSocket abstraction for real-time communication
 
-This synergistic integration of diverse components provides a seamless and efficient communication experience for our users.
-## Conclusion
-In conclusion, this application offers a powerful and scalable solution for real-time messaging. With features like user tracking, low-latency message retrieval, and robust Kafka integration, it stands as a testament to modern chat application requirements.
+### Deployment
+- **Render** — Cloud platform for hosting frontend and backend
 
+---
 
+## 🏗️ Architecture
 
+Konect follows a clean **Client-Server architecture** using persistent WebSocket connections.
 
+```
+┌─────────────────────────────────────────────┐
+│                   CLIENT                    │
+│  ┌─────────────┐       ┌─────────────────┐  │
+│  │  index.html │       │ dashboard.html  │  │
+│  │  (Login)    │──────▶│  (Chat Room)    │  │
+│  └─────────────┘       └────────┬────────┘  │
+│                                 │           │
+│                         Socket.io Client    │
+└─────────────────────────────────┼───────────┘
+                                  │  WebSocket
+                   ┌──────────────▼────────────┐
+                   │          SERVER            │
+                   │  ┌──────────────────────┐  │
+                   │  │     Express.js        │  │
+                   │  │  (HTTP + Static)      │  │
+                   │  └──────────────────────┘  │
+                   │  ┌──────────────────────┐  │
+                   │  │    Socket.io Server  │  │
+                   │  │  ┌────────────────┐  │  │
+                   │  │  │  Room Manager  │  │  │
+                   │  │  │  Msg Broadcast │  │  │
+                   │  │  └────────────────┘  │  │
+                   │  └──────────────────────┘  │
+                   └────────────────────────────┘
+```
 
+---
 
+## 🔄 Real-Time Communication Flow
+
+```
+User Opens App
+      │
+      ▼
+Enter Username / Dashboard
+      │
+      ▼
+Create or Join a Room
+      │
+      ▼
+Socket Connection Established  ──────▶  Server registers user in room
+      │
+      ▼
+User sends message
+  emit('sendMessage')  ──────────────▶  Server receives event
+                                              │
+                                              ▼
+                                   broadcast('receiveMessage')
+                                              │
+                              ┌───────────────▼───────────────┐
+                              │  All users in the room        │
+                              │  receive the message instantly│
+                              └───────────────────────────────┘
+```
+
+**Socket Events:**
+
+| Event | Direction | Description |
+|---|---|---|
+| `joinRoom` | Client → Server | User joins a specific chat room |
+| `sendMessage` | Client → Server | User sends a message |
+| `receiveMessage` | Server → Client | Broadcast message to room |
+| `disconnect` | Auto | Handles user leaving |
+
+---
+
+## 📂 Project Structure
+
+```
+Konect/
+│
+├── client/                   # Frontend
+│   ├── index.html            # Login / Entry page
+│   ├── dashboard.html        # Chat room interface
+│   ├── styles/               # CSS stylesheets
+│   └── scripts/              # Client-side JS (socket logic, UI)
+│
+├── server/                   # Backend
+│   ├── controllers/          # Request & event handlers
+│   ├── socket/               # Socket.io event logic
+│   └── index.js              # Server entry point
+│
+├── package.json
+└── README.md
+```
+
+---
+
+## ⚙️ Setup & Installation
+
+### Prerequisites
+- [Node.js](https://nodejs.org/) v14+
+- npm
+
+### Steps
+
+**1. Clone the repository**
+```bash
+git clone https://github.com/your-username/konect.git
+cd konect
+```
+
+**2. Install dependencies**
+```bash
+npm install
+```
+
+**3. Start the development server**
+```bash
+npm run dev
+```
+
+**4. Run the frontend**
+
+Open `client/index.html` using **Live Server** (VS Code extension), or access the deployed version directly at:
+
+> 🌐 [https://konect-f.onrender.com/](https://konect-f.onrender.com/)
+
+---
+
+## 🚀 Deployment
+
+Konect is fully deployed on **[Render](https://render.com/)** — both frontend and backend:
+
+| Service | URL |
+|---|---|
+| 🌐 Live App | [https://konect-f.onrender.com/](https://konect-f.onrender.com/) |
+
+---
+
+## 🎯 Key Highlights
+
+- ✅ Built a real-time communication system **from scratch** using WebSockets
+- ✅ Designed a **room-based architecture** supporting multiple concurrent users
+- ✅ Achieved **low-latency messaging** via persistent Socket.io connections
+- ✅ Created a **clean, responsive UI** for seamless cross-device experience
+- ✅ Deployed a **fully functional production application** on Render
+
+---
+
+## 📈 Future Improvements
+
+- [ ] 🔔 **Typing Indicators** — Show when someone is typing
+- [ ] ✅ **Read Receipts** — Message seen status
+- [ ] 🗄️ **Message Persistence** — Store messages in a database (MongoDB)
+- [ ] 🔐 **Authentication** — JWT-based login and user sessions
+- [ ] 📲 **Push Notifications** — Notify users of new messages
+- [ ] 😄 **Emoji Reactions** — React to messages
+- [ ] 🔍 **Message Search** — Search within a room's history
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome and appreciated!
+
+```bash
+# Fork the repo
+# Create your feature branch
+git checkout -b feature/amazing-feature
+
+# Commit your changes
+git commit -m "Add some amazing feature"
+
+# Push to the branch
+git push origin feature/amazing-feature
+
+# Open a Pull Request
+```
+
+---
+
+## 📬 Contact
+
+**Built with ❤️ to demonstrate real-time system design and frontend engineering.**
+
+| Platform | Link |
+|---|---|
+| 🐙 GitHub | [github.com/your-username](https://github.com/your-username) |
+| 💼 LinkedIn | [linkedin.com/in/your-profile](https://linkedin.com/in/your-profile) |
+
+---
+
+<div align="center">
+
+⭐ **If you found this project useful, please consider giving it a star!** ⭐
+
+<br/>
+
+*💡 Konect — Connecting conversations in real-time.*
+
+</div>
