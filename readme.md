@@ -264,12 +264,12 @@ git push origin feature/amazing-feature
 
 ## 📬 Contact
 
-**Built with ❤️ to demonstrate real-time system design and frontend engineering.**
+**Built with ❤️ by Vinit Sikri to demonstrate real-time system design and frontend engineering.**
 
 | Platform | Link |
 |---|---|
-| 🐙 GitHub | [github.com/your-username](https://github.com/your-username) |
-| 💼 LinkedIn | [linkedin.com/in/your-profile](https://linkedin.com/in/your-profile) |
+| 🐙 GitHub | [github.com/your-username](https://github.com/Vinit-Sikri) |
+| 💼 LinkedIn | [linkedin.com/in/your-profile](https://www.linkedin.com/in/vinit-sikri-46a997252) |
 
 ---
 
